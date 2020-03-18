@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'loginViewModel.dart';
-import '../dashboard/dashboardView.dart';
+import '../utils/constants.dart';
 
 class LoginView extends StatefulWidget {
   LoginView({Key key, this.title}) : super(key: key);
@@ -29,14 +29,14 @@ class _LoginViewState extends State<LoginView> {
               children: <Widget>[
                 Image.asset('assets/login/ic_ps_logo.png', height: 80.0, width: 120.0),
                 SizedBox(height: 20.0),
-                Text('Your access requires your Lion Login (LL) ID \nPlease DO NOT USE your email address', textAlign: TextAlign.center, style: fontStyle),
+                Text(AppMessages.llIdRequired, textAlign: TextAlign.center, style: fontStyle),
               ],
             ),
 
             SizedBox(height: 80.0),
             TextField(
               decoration: InputDecoration(
-                labelText: 'Lion Login',
+                labelText: AppStrings.lioLogin,
                 filled: true,
               ),
               onChanged: (text) {
@@ -47,7 +47,7 @@ class _LoginViewState extends State<LoginView> {
             SizedBox(height: 15.0),
             TextField(
               decoration: InputDecoration(
-                labelText: 'Password',
+                labelText: AppStrings.password,
                 filled: true,
               ),
               obscureText: true,
@@ -59,9 +59,9 @@ class _LoginViewState extends State<LoginView> {
             ButtonBar(
               children: <Widget>[
                 RaisedButton(
-                  child: Text('Sign In'),
+                  child: Text(AppStrings.signIn),
                   onPressed: () {
-                   signinWithVerification();
+                   this.vm.signInWithVerification(_scaffoldKey.currentContext);
                   },
                 )
               ],
@@ -70,40 +70,5 @@ class _LoginViewState extends State<LoginView> {
         ),
       ),
     );
-  }
-
-  signinWithVerification() {
-    if (isDataValid()) {
-      goToDashboard();
-    }
-  }
-
-  bool isDataValid() {
-    if (this.vm.llId.isEmpty) {
-      showSnackbar("Please enter LL id.");
-      return false;
-    }
-    else if (this.vm.password.isEmpty) {
-      showSnackbar("Please enter password.");
-      return false;
-    }
-    else {
-      return true;
-    }
-  }
-
-  goToDashboard() {
-    Navigator.push(
-      _scaffoldKey.currentContext,
-      MaterialPageRoute(builder: (context) => DashboardView()),
-    );
-  }
-
-  showSnackbar(String message, {int duration = 1}) {
-    _scaffoldKey.currentState.showSnackBar(
-        SnackBar(
-          content: Text(message),
-          duration: Duration(seconds: duration),
-        ));
   }
 }
