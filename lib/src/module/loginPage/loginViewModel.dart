@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../dashboard/homeView.dart';
+import '../dashboard/dashboardView.dart';
 import '../utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginViewModel {
 
@@ -15,19 +16,33 @@ class LoginViewModel {
     this.password = password;
   }
 
-  signInWithVerification(BuildContext context) {
-    if (isDataValid(context)) {
-      goToDashboard(context);
+  signInWithVerification(BuildContext context) async{
+    if (_isDataValid(context)) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool(SharedPreferencesKeys.isLoggedIn, true);
+      _goToDashboard(context);
     }
   }
 
-  bool isDataValid(BuildContext context) {
+  bool _isDataValid(BuildContext context) {
     if (this.llId.isEmpty) {
-      showSnackBar(context, AppMessages.enterYourLlId);
+      _showSnackBar(context, AppMessages.enterYourLlId);
+      return false;
+    }
+    else if (this.llId.length < AppConstants.minCredentialLength) {
+      _showSnackBar(context, AppMessages.llIdIsShort);
       return false;
     }
     else if (this.password.isEmpty) {
-      showSnackBar(context, AppMessages.enterPassword);
+      _showSnackBar(context, AppMessages.enterPassword);
+      return false;
+    }
+    else if (this.password.length < AppConstants.minCredentialLength) {
+      _showSnackBar(context, AppMessages.passwordIsShort);
+      return false;
+    }
+    else if (this.password == this.llId) {
+      _showSnackBar(context, AppMessages.idPasswordCanNotSame);
       return false;
     }
     else {
@@ -35,14 +50,14 @@ class LoginViewModel {
     }
   }
 
-  goToDashboard(BuildContext context) {
-    Navigator.push(
+  _goToDashboard(BuildContext context) {
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeView()),
+      MaterialPageRoute(builder: (context) => DashboardView()),
     );
   }
 
-  showSnackBar(BuildContext context, String message, {int duration = 1}) {
+  _showSnackBar(BuildContext context, String message, {int duration = 1}) {
     Scaffold.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: Duration(seconds: duration),

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'loginPage/loginView.dart';
 import 'utils/constants.dart';
+import 'splashScreen/splashScreen.dart';
 
 void main() => runApp(TimeCardApp());
 
 class TimeCardApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
-      title: "Login Screen",
       theme: ThemeData(
         primarySwatch: AppColors.themeBlueColor,
       ),
-      home: Scaffold(body: LoginView()),
+      home: Scaffold(body: SplashScreen()),
     );
   }
 }

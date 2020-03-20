@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AddNewTimeCardView extends StatelessWidget {
+class VacationTrackerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
     return Center(
-      child: Text("AddNewTimeCardView"),
+      child: Text("VacationTrackerView"),
     );
   }
 }
