@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../dashboard/dashboardView.dart';
 import '../loginPage/loginView.dart';
 import '../utils/constants.dart';
+import 'package:timecard/src/module/models/userModel.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -12,11 +14,12 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String loggedInUserId;
 
   @override
   void initState() {
     super.initState();
-    startTimer();
+    getUserDetails();
   }
 
   @override
@@ -83,23 +86,45 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void startTimer() {
-    Timer(Duration(seconds: 2), () {
-      navigateUser(); //It will redirect  after 3 seconds
+  //get firestore instance
+  getUserDetails() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    loggedInUserId = prefs.getString(SharedPreferencesKeys.loggedInUserId);
+
+    if (loggedInUserId == null) {
+      _startTimer();
+    } else {
+      _fetchUserDetails(loggedInUserId);
+    }
+  }
+
+  _fetchUserDetails(String usedId) {
+
+    Firestore.instance.collection(FireBaseKeys.userData).document(usedId).get().then((result) {
+      _saveCurrentUserData(result.data);
+      _startTimer();
     });
   }
 
-  void navigateUser() async{
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var status = prefs.getBool(SharedPreferencesKeys.isLoggedIn) ?? false;
-    print(status);
-    if (status) {
+  _saveCurrentUserData(Map<String, dynamic> data) {
+    AppConstants.currentUser = UserModel.fromJson(data);
+  }
+
+  _startTimer() {
+    Timer(Duration(seconds: 1), () {
+      _navigateUser(); //It will redirect  after given seconds
+    });
+  }
+
+  _navigateUser() {
+
+    if (loggedInUserId == null) {
       Navigator.pushReplacement(_scaffoldKey.currentContext, MaterialPageRoute(
-          builder: (BuildContext context) => DashboardView())
+          builder: (BuildContext context) => LoginView())
       );
     } else {
       Navigator.pushReplacement(_scaffoldKey.currentContext, MaterialPageRoute(
-          builder: (BuildContext context) => LoginView())
+          builder: (BuildContext context) => DashboardView())
       );
     }
   }

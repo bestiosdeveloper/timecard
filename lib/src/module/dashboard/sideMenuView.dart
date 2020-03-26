@@ -13,7 +13,7 @@ class SideMenuView extends StatefulWidget {
 }
 
 class _SideMenuViewState extends State<SideMenuView> {
-  SideMenuViewModel viewModel = new SideMenuViewModel();
+  SideMenuViewModel viewModel = SideMenuViewModel();
   double screenWidth;
 
   void initState() {
@@ -28,70 +28,81 @@ class _SideMenuViewState extends State<SideMenuView> {
     Size size = MediaQuery.of(context).size;
     screenWidth = size.width;
 
-    double profilePicSize = (0.15 * screenWidth);
-
     return Container(
       width: (0.6 * screenWidth) + 32,
       child: ListView.builder(
         itemCount: this.viewModel.menuOptions.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  color: AppColors.themeBlueColor,
-                  child: Padding(
-                    padding: EdgeInsets.fromLTRB(12, 50, 5, 20),
-                    child: Container(
-                      child: Row(
+            return _getProfileHeader();
+          } else {
+            return _getListItemTile(context, index-1);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _getProfileHeader() {
+
+    double profilePicSize = (0.15 * screenWidth);
+
+    return GestureDetector(
+      onTap: (){
+        manageSelectionSelection(0);
+        viewModel.goToProfileDetails(context);
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            color: AppColors.themeBlueColor,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(12, 50, 5, 20),
+              child: Container(
+                child: Row(
+                  children: <Widget>[
+                    Container(
+                        width: profilePicSize,
+                        height: profilePicSize,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image:
+                                NetworkImage(AppConstants.currentUser.profilePic)))),
+                    SizedBox(width: 0),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
                         children: <Widget>[
-                          Container(
-                              width: profilePicSize,
-                              height: profilePicSize,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image:
-                                          NetworkImage(AppStrings.profileImage)))),
-                          SizedBox(width: 0),
-                          Expanded(
-                            flex: 1,
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Pramod Kumar",
-                                  style: TextStyle(
-                                      color: AppColors.white,
-                                      fontSize: 23,
-                                      fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  "Software mobile developer",
-                                  style: TextStyle(
-                                      color: AppColors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
+                          Text(
+                            AppConstants.currentUser.fullName,
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 23,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            AppConstants.currentUser.profileTitle,
+                            style: TextStyle(
+                              color: AppColors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            );
-          } else {
-            return _getListItemTile(context, index-1);
-          }
-        },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -108,26 +119,30 @@ class _SideMenuViewState extends State<SideMenuView> {
           ),
         ),
         onTap: () {
-          if (AppConstants.lastSelectedSideMenu == index) {
-            widget.onTapCallBack(index);
-          }
-          else {
-            AppConstants.lastSelectedSideMenu = index;
-            setState(() {
-              for (var i = 0; i < this.viewModel.menuOptions.length; i++) {
-                if (i == index) {
-                  this.viewModel.menuOptions[i].isChosen = true;
-                }
-                else {
-                  this.viewModel.menuOptions[i].isChosen = false;
-                }
-              }
-            });
-
-            widget.onTapCallBack(index);
-          }
+          manageSelectionSelection(index);
         },
       ),
     );
+  }
+
+  manageSelectionSelection(int index) {
+    if (AppConstants.lastSelectedSideMenu == index) {
+      widget.onTapCallBack(index);
+    }
+    else {
+      AppConstants.lastSelectedSideMenu = index;
+      setState(() {
+        for (var i = 0; i < this.viewModel.menuOptions.length; i++) {
+          if (i == index) {
+            this.viewModel.menuOptions[i].isChosen = true;
+          }
+          else {
+            this.viewModel.menuOptions[i].isChosen = false;
+          }
+        }
+      });
+
+      widget.onTapCallBack(index);
+    }
   }
 }

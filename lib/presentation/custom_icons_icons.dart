@@ -25,4 +25,5 @@ class CustomIcons {
   static const _kFontFam = 'CustomIcons';
 
   static const IconData arrow_forward = IconData(0xe800, fontFamily: _kFontFam);
+  static const IconData fiber_manual_record = IconData(0xe801, fontFamily: _kFontFam);
 }

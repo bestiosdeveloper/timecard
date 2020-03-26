@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
+import '../profileDetailView/profileDetailView.dart';
 
 class SideMenuItem {
   String title = "";
@@ -20,4 +21,11 @@ class SideMenuViewModel {
     SideMenuItem(title: AppStrings.vacationTracker, icon: Icon(Icons.track_changes), isChosen: false),
     SideMenuItem(title: AppStrings.logOut, icon: Icon(Icons.exit_to_app), isChosen: false),
   ];
+
+  goToProfileDetails(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfileDetailView()),
+    );
+  }
 }

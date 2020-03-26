@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import '../dashboard/dashboardView.dart';
 import '../utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/userModel.dart';
 
 class LoginViewModel {
-
   String llId = "";
   String password = "";
 
@@ -16,11 +17,9 @@ class LoginViewModel {
     this.password = password;
   }
 
-  signInWithVerification(BuildContext context) async{
+  signInWithVerification(BuildContext context) async {
     if (_isDataValid(context)) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool(SharedPreferencesKeys.isLoggedIn, true);
-      _goToDashboard(context);
+      _loginUser(context);
     }
   }
 
@@ -28,26 +27,60 @@ class LoginViewModel {
     if (this.llId.isEmpty) {
       _showSnackBar(context, AppMessages.enterYourLlId);
       return false;
-    }
-    else if (this.llId.length < AppConstants.minCredentialLength) {
+    } else if (this.llId.length < AppConstants.minCredentialLength) {
       _showSnackBar(context, AppMessages.llIdIsShort);
       return false;
-    }
-    else if (this.password.isEmpty) {
+    } else if (this.password.isEmpty) {
       _showSnackBar(context, AppMessages.enterPassword);
       return false;
-    }
-    else if (this.password.length < AppConstants.minCredentialLength) {
+    } else if (this.password.length < AppConstants.minCredentialLength) {
       _showSnackBar(context, AppMessages.passwordIsShort);
       return false;
-    }
-    else if (this.password == this.llId) {
+    } else if (this.password == this.llId) {
       _showSnackBar(context, AppMessages.idPasswordCanNotSame);
       return false;
-    }
-    else {
+    } else {
       return true;
     }
+  }
+
+  _loginUser(BuildContext context) {
+    Firestore.instance
+        .collection(FireBaseKeys.registeredUser)
+        .where(FireBaseKeys.userName, isEqualTo: this.llId)
+        .where(FireBaseKeys.password, isEqualTo: this.password)
+        .snapshots()
+        .listen((result) {
+      if (result.documents.isEmpty) {
+        _showSnackBar(context, AppMessages.useIdOrPasswordIncorrect);
+      } else {
+        String userId = result.documents[0][FireBaseKeys.userId];
+        _fetchUserDetailsAndGoDashboard(context, userId);
+      }
+    }, onError: (error) {
+      print(error);
+    });
+  }
+
+  _saveInPreference(String id) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(SharedPreferencesKeys.loggedInUserId, id);
+  }
+
+  _fetchUserDetailsAndGoDashboard(BuildContext context, String userId) {
+    _saveInPreference(userId);
+    Firestore.instance
+        .collection(FireBaseKeys.userData)
+        .document(userId)
+        .get()
+        .then((result) {
+      _saveCurrentUserData(result.data);
+      _goToDashboard(context);
+    });
+  }
+
+  _saveCurrentUserData(Map<String, dynamic> data) {
+    AppConstants.currentUser = UserModel.fromJson(data);
   }
 
   _goToDashboard(BuildContext context) {

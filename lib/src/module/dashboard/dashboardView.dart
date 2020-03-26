@@ -132,7 +132,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
   Widget dashboard(context) {
 
     //subtracting 32 because whole container having 16 left and 16 right padding
-    double menuContainerWidth = screenWidth - 32, menuContainerHeight = 44;
+    double menuContainerWidth = screenWidth - 20, menuContainerHeight = AppConstants.homeMenuContainerHeight;
 
     return AnimatedPositioned(
       duration: duration,
@@ -144,7 +144,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
         scale: _scaleAnimation,
         child: Material(
           animationDuration: duration,
-          borderRadius: BorderRadius.all(Radius.circular(isCollapsed ? 0 : 40)),
+          borderRadius: BorderRadius.all(Radius.circular(isCollapsed ? 0 : 30)),
           elevation: isCollapsed ? 0 : 8,
           color: AppColors.white,
           child: SingleChildScrollView(
@@ -152,14 +152,15 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
             physics: ClampingScrollPhysics(),
             child: Container(
               padding: EdgeInsets.only(
-                  left: 16,
-                  right: 16,
+                  left: 0,
+                  right: 0,
                   top: MediaQuery.of(context).padding.top
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Container(
+                    padding: EdgeInsets.only(left: 10, right: 10),
                     constraints: BoxConstraints.expand(height: menuContainerHeight),
                     child: Stack(
                       fit: StackFit.loose,
@@ -222,9 +223,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
                       ],
                     ),
                   ),
-                  Container(
-                      child: _getDrawerItemWidget(_selectedDrawerIndex),
-                  ),
+                  _getDrawerItemWidget(_selectedDrawerIndex),
                 ],
               ),
             ),

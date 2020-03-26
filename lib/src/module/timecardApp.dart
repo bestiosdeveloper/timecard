@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'utils/constants.dart';
 import 'splashScreen/splashScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() => runApp(TimeCardApp());
 
