@@ -33,8 +33,8 @@ class WeekTimeCardModel {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> finalDict = {
-      FireBaseKeys.weekDate: weekDate,
-      FireBaseKeys.submissionDate: submissionDate,
+      FireBaseKeys.weekDate: weekDate.toIso8601String(),
+      FireBaseKeys.submissionDate: submissionDate.toIso8601String(),
       FireBaseKeys.owner: AppConstants.currentUserId,
     };
 

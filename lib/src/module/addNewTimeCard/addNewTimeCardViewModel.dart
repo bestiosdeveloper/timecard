@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/weekTimeCardModel.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddNewTimeCardViewModel {
   String message = "Please Note:"
@@ -70,7 +71,16 @@ class AddNewTimeCardViewModel {
     Map<String, dynamic> dict = timeCardDetails.toJson();
 
     final databaseReference = FirebaseDatabase.instance.reference();
-    databaseReference.child("data").child("info1").set({
+    print(dict);
+
+    final databaseReference1 = Firestore.instance;
+
+    databaseReference1.collection("myData1").document("myInfo1").setData({
+      'title': 'Mastering EJB',
+      'description': 'Programming Guide for J2EE'
+    });
+
+    databaseReference.child("myData").child("myInfo").set({
       'title': 'Mastering EJB',
       'description': 'Programming Guide for J2EE'
     }).then((onValue) {
@@ -79,6 +89,11 @@ class AddNewTimeCardViewModel {
       print("fail");
       print(onError);
     });
-    databaseReference.child("2").set(dict);
+    databaseReference.child("2").child("21").set(dict).then((onValue) {
+      print("done 1");
+    }).catchError((onError) {
+      print("fail 1");
+      print(onError);
+    });
   }
 }
