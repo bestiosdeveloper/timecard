@@ -1,3 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'package:timecard/src/module/models/dashboardStatics.dart';
+import '../utils/constants.dart';
+
 class TitleValueItem {
   String title = "";
   String value = "";
@@ -42,21 +48,38 @@ class HomeViewModel {
   }
 
   List<String> availableYears = [
-    "2017",
-    "2018",
     "2019",
     "2020",
   ];
 
-  fetchDataFor(String year) {
-    int yr = int.parse(year);
-    double ut = (yr * 0.02);
-    double hr = (yr * 0.03);
+  _calculateImpactAreas() {
     impactAreas = [
-      TitleValueItem(title: "Billable Utilization", value: ut.toString() + "%"),
-      TitleValueItem(title: "Performance Utilization", value: ut.toString() + "%"),
-      TitleValueItem(title: "Bench Hours", value: hr.toString()),
-      TitleValueItem(title: "Bonus Impact due to Bench Hours", value: "NA"),
+      TitleValueItem(title: "Billable Utilization", value: AppConstants.dashboardStatics.billableUtilization.toStringAsFixed(2) + "%"),
+      TitleValueItem(title: "Performance Utilization", value: AppConstants.dashboardStatics.performanceUtilization.toStringAsFixed(2) + "%"),
+      TitleValueItem(title: "Bench Hours", value: AppConstants.dashboardStatics.benchHours.toStringAsFixed(1)),
+      TitleValueItem(title: "Bonus Impact due to Bench Hours", value: AppConstants.dashboardStatics.bonusImpact),
     ];
+  }
+
+  fetchDashboardStatics(String year, ValueChanged<bool> onChanged) {
+    Firestore.instance
+        .collection(FireBaseKeys.dashboardStatics)
+        .where(FireBaseKeys.owner, isEqualTo: AppConstants.currentUserId)
+        .where(FireBaseKeys.year, isEqualTo: year)
+        .snapshots()
+        .listen((result) {
+      if (result.documents.isEmpty) {
+        AppConstants.dashboardStatics = DashboardStatics(owner: AppConstants.currentUserId);
+      } else {
+        DashboardStatics dash = DashboardStatics.fromJson(result.documents[0].data);
+        dash.documentID = result.documents[0].documentID;
+        AppConstants.dashboardStatics = dash;
+      }
+      _calculateImpactAreas();
+      onChanged(true);
+    }, onError: (error) {
+      print(error);
+      onChanged(false);
+    });
   }
 }

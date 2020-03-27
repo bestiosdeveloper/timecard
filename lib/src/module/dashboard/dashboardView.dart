@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:timecard/src/module/models/userModel.dart';
 import 'package:timecard/src/module/utils/constants.dart';
 import 'sideMenuView.dart';
 import 'sideMenuViewModel.dart';
@@ -6,7 +7,6 @@ import '../homeView/homeView.dart';
 import '../addNewTimeCard/addNewTimeCardView.dart';
 import '../historyView/historyView.dart';
 import '../policyView/policyView.dart';
-import '../vacationTrackerView/vacationTrackerView.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../loginPage/loginView.dart';
 
@@ -32,7 +32,7 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
   Animation<double> _scaleAnimation;
   Animation<double> _menuScaleAnimation;
   Animation<Offset> _slideAnimation;
-  final Color backgroundColor = AppColors.themeBlueColor;
+  Color backgroundColor = AppColors.themeBlueColor;
 
   _getDrawerItemWidget(int pos) {
     switch (pos) {
@@ -44,9 +44,9 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
         return HistoryView();
       case 3:
         return PolicyView();
+//      case 4:
+//        return VacationTrackerView();
       case 4:
-        return VacationTrackerView();
-      case 5:
         logoutUser();
         break;
 
@@ -64,6 +64,8 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
   void logoutUser() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.clear();
+    AppConstants.currentUserId = "";
+    AppConstants.currentUser = UserModel();
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => LoginView()));
   }
 
@@ -91,6 +93,12 @@ class _DashboardViewState extends State<DashboardView> with SingleTickerProvider
     _scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(_controller);
     _menuScaleAnimation = Tween<double>(begin: 0.5, end: 1).animate(_controller);
     _slideAnimation = Tween<Offset>(begin: Offset(-1, 0), end: Offset(0, 0)).animate(_controller);
+
+    viewModel.addListnerForThemeUpdate((isDone){
+      setState(() {
+        backgroundColor = AppColors.themeBlueColor;
+      });
+    });
   }
 
   @override

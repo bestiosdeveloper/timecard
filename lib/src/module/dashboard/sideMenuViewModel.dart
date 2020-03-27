@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
 import '../profileDetailView/profileDetailView.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SideMenuItem {
   String title = "";
@@ -18,7 +19,7 @@ class SideMenuViewModel {
     SideMenuItem(title: AppStrings.addNew, icon: Icon(Icons.create_new_folder), isChosen: false),
     SideMenuItem(title: AppStrings.history, icon: Icon(Icons.history), isChosen: false),
     SideMenuItem(title: AppStrings.policy, icon: Icon(Icons.note), isChosen: false),
-    SideMenuItem(title: AppStrings.vacationTracker, icon: Icon(Icons.track_changes), isChosen: false),
+//    SideMenuItem(title: AppStrings.vacationTracker, icon: Icon(Icons.track_changes), isChosen: false),
     SideMenuItem(title: AppStrings.logOut, icon: Icon(Icons.exit_to_app), isChosen: false),
   ];
 
@@ -27,5 +28,17 @@ class SideMenuViewModel {
       context,
       MaterialPageRoute(builder: (context) => ProfileDetailView()),
     );
+  }
+
+  addListnerForThemeUpdate(ValueChanged<bool> onComplete) {
+
+    Firestore.instance
+        .collection(FireBaseKeys.userData)
+        .snapshots()
+        .listen((result) {
+          onComplete(true);
+    }, onError: (error) {
+      onComplete(false);
+    });
   }
 }

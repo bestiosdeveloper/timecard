@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:timecard/presentation/custom_icons_icons.dart';
 import 'package:timecard/src/module/utils/constants.dart';
 import 'profileViewModel.dart';
 
@@ -11,10 +10,13 @@ class ProfileDetailView extends StatefulWidget {
 class _ProfileDetailViewState extends State<ProfileDetailView> {
   ProfileViewModel viewModel = ProfileViewModel();
 
+  int selectedThemeIndex = 0;
+
   @override
   void initState() {
     super.initState();
 
+    selectedThemeIndex = AppConstants.currentUser.themeColor;
     viewModel.fetchDetailsToShow();
   }
 
@@ -31,7 +33,7 @@ class _ProfileDetailViewState extends State<ProfileDetailView> {
       appBar: AppBar(
         backgroundColor: AppColors.themeBlueColor,
         title: Text(
-            AppConstants.currentUser.firstName + AppStrings.myProfileTitle),
+            AppConstants.currentUser.firstName + AppStrings.myProfileTitle, style: TextStyle(color: AppColors.white),),
       ),
       body: Stack(
         children: <Widget>[
@@ -79,7 +81,7 @@ class _ProfileDetailViewState extends State<ProfileDetailView> {
                 SizedBox(height: 30),
                 _getProfileDetailsWidget(),
                 SizedBox(height: 20),
-//                _getChooseThemeWidget(),
+                _getChooseThemeWidget(),
               ],
             ),
           ),
@@ -126,49 +128,66 @@ class _ProfileDetailViewState extends State<ProfileDetailView> {
         padding: EdgeInsets.only(left: 5.0, right: 5.0),
         child: Column(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                Expanded(
-                  flex: 1,
-                  child: Text(
-                    "Choose theme color:",
-                    style: TextStyle(
-                      color: AppColors.themeBlueColor[900],
-                      fontSize: 15.0,
-                      fontWeight: FontWeight.w700,
+            Expanded(
+              flex: 3,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    flex: 1,
+                    child: Text(
+                      "Choose theme color:",
+                      style: TextStyle(
+                        color: AppColors.themeBlueColor[900],
+                        fontSize: 15.0,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Expanded(
-              flex: 4,
+              flex: 7,
               child: Container(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: Row(
-                  children: <Widget>[
-
-                    // [Monday] checkbox
-                    Container(
-                      child: Checkbox(
-                        value: false,
-                        onChanged: (bool value) {
-
-                        },
-                      ),
-                      color: AppColors.red,
-                      height: checkBoxHeight,
-                      width: checkBoxWidth,
-                    ),
-
-
-                  ],
-                ),
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: AppColors.themeColors.length,
+                    itemBuilder: (context, index) {
+                      return _getCheckboxWidget(index);
+                    }),
               ),
             ),
             SizedBox(height: 5),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _getCheckboxWidget(int index) {
+    return Container(
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            height: 35.0,
+            width: 35.0,
+            color: AppColors.themeColors[index],
+            child: Checkbox(
+              activeColor: AppColors.themeColors[index],
+              value: (selectedThemeIndex == index),
+              onChanged: (bool value) {
+                viewModel.updateSelectedTheme(index, (isDone) {
+                  setState(() {
+                    selectedThemeIndex = index;
+                  });
+                });
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

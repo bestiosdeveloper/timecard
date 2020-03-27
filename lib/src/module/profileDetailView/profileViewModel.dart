@@ -1,6 +1,8 @@
 import 'dart:collection';
+import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:timecard/src/module/utils/constants.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileViewModel {
 
@@ -13,12 +15,22 @@ class ProfileViewModel {
 
     String dojStr = DateFormat('dd MMM yyyy').format(AppConstants.currentUser.doj);
     detailsToShow[AppStrings.doj] = dojStr;
-
-    print("Fetched");
   }
 
   double detailRowHeight = 50.0;
   double get detailTileHeight {
     return detailsToShow.length * detailRowHeight;
+  }
+
+  updateSelectedTheme(int themeIndex, ValueChanged<bool> onComplete) {
+    final databaseReference1 = Firestore.instance;
+
+    AppConstants.currentUser.themeColor = themeIndex;
+
+    databaseReference1.collection(FireBaseKeys.userData).document(AppConstants.currentUserId).setData(AppConstants.currentUser.toJson()).then((onValue) {
+      onComplete(true);
+    }).catchError((onError) {
+      onComplete(false);
+    });
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:timecard/src/module/utils/constants.dart';
 import '../models/weekTimeCardModel.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AddNewTimeCardViewModel {
@@ -67,33 +67,28 @@ class AddNewTimeCardViewModel {
     ));
   }
 
-  saveDataToServer() {
+  saveDataToServer(ValueChanged<bool> onComplete) {
     Map<String, dynamic> dict = timeCardDetails.toJson();
-
-    final databaseReference = FirebaseDatabase.instance.reference();
-    print(dict);
 
     final databaseReference1 = Firestore.instance;
 
-    databaseReference1.collection("myData1").document("myInfo1").setData({
-      'title': 'Mastering EJB',
-      'description': 'Programming Guide for J2EE'
+    databaseReference1.collection(FireBaseKeys.weeklyTimeCard).document(timeCardDetails.weekDataStr).setData(dict).then((onValue) {
+      _updateDashboardStatics();
+      onComplete(true);
+    }).catchError((onError) {
+      onComplete(false);
     });
+  }
 
-    databaseReference.child("myData").child("myInfo").set({
-      'title': 'Mastering EJB',
-      'description': 'Programming Guide for J2EE'
-    }).then((onValue) {
-      print("done");
+  _updateDashboardStatics() {
+
+    AppConstants.dashboardStatics.totalHours += timeCardDetails.total;
+    AppConstants.dashboardStatics.billableHours += timeCardDetails.billableHours;
+    AppConstants.dashboardStatics.nonBillableHours += timeCardDetails.nonBillableHours;
+
+    final databaseReference1 = Firestore.instance;
+    databaseReference1.collection(FireBaseKeys.dashboardStatics).document(AppConstants.dashboardStatics.documentID).setData(AppConstants.dashboardStatics.toJson()).then((onValue) {
     }).catchError((onError) {
-      print("fail");
-      print(onError);
-    });
-    databaseReference.child("2").child("21").set(dict).then((onValue) {
-      print("done 1");
-    }).catchError((onError) {
-      print("fail 1");
-      print(onError);
     });
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/userModel.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../models/dashboardStatics.dart';
 
 //App used colors
 class AppColors {
@@ -8,7 +8,10 @@ class AppColors {
   static const List<Color> themeColors = [
     Colors.blue,
     Colors.red,
-    Colors.green
+    Colors.green,
+    Colors.purple,
+    Colors.pink,
+    Colors.amber,
   ];
 
   static get themeBlueColor {
@@ -41,7 +44,7 @@ class AppColors {
 class AppConstants {
 
   static UserModel currentUser;
-
+  static DashboardStatics dashboardStatics;
 
   static const String appName = "Time Tracker";
   static var lastSelectedSideMenu = 0;
@@ -90,6 +93,8 @@ class AppStrings {
   static const String project = "Project";
   static const String clientName = "Client Name";
   static const String apply = "Apply";
+  static const String comment = "Comment";
+  static const String location = "Location";
   static const String suggestedTimeCardOracle = "Suggested Time Card based on oracle";
 
   //Profile Details
@@ -156,8 +161,17 @@ class FireBaseKeys {
   static const String comment = "comment";
 
   //Week Time Card
+  static const String weeklyTimeCard = "weeklyTimeCard";
   static const String weekDate = "weekDate";
   static const String submissionDate = "submissionDate";
   static const String allTimeCards = "allTimeCards";
   static const String owner = "owner";
+
+  //Dashboard Statics
+  static const String dashboardStatics = "dashboardStatics";
+  static const String billableHours = "billableHours";
+  static const String nonBillableHours = "nonBillableHours";
+  static const String totalHours = "totalHours";
+  static const String benchHours = "benchHours";
+  static const String year = "year";
 }

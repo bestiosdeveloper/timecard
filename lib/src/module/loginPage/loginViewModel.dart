@@ -45,7 +45,6 @@ class LoginViewModel {
   }
 
   _loginUser(BuildContext context) {
-    print("1");
     Firestore.instance
         .collection(FireBaseKeys.registeredUser)
         .where(FireBaseKeys.userName, isEqualTo: this.llId)
@@ -64,7 +63,6 @@ class LoginViewModel {
   }
 
   _saveInPreference(String id) async {
-    print("2 " + id);
     AppConstants.currentUserId = id;
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString(SharedPreferencesKeys.loggedInUserId, id);
@@ -83,7 +81,6 @@ class LoginViewModel {
   }
 
   _saveCurrentUserData(Map<String, dynamic> data) {
-    print("3");
     AppConstants.currentUser = UserModel.fromJson(data);
   }
 

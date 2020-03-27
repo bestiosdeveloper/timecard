@@ -12,13 +12,22 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends  State<HomeView> {
   HomeViewModel viewModel = HomeViewModel();
   String currentSelectedYear = "";
+  bool shouldUpdate = false;
 
   @override
   void initState() {
     super.initState();
 
-    currentSelectedYear = viewModel.availableYears.last;
-    viewModel.fetchDataFor(currentSelectedYear);
+    currentSelectedYear = DateTime.now().year.toString();
+    _callFetchDashboard();
+  }
+
+  _callFetchDashboard() {
+    viewModel.fetchDashboardStatics(currentSelectedYear, (isDone){
+      setState(() {
+        shouldUpdate = true;
+      });
+    });
   }
 
   Widget _getHeaderWidget() {
@@ -77,6 +86,7 @@ class _HomeViewState extends  State<HomeView> {
         onSelected: (String result) {
           setState(() {
             this.currentSelectedYear = result;
+            _callFetchDashboard();
           });
         });
   }

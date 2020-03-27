@@ -13,7 +13,7 @@ class SuggestedTimeCardView extends StatelessWidget {
     location: "Noida",
     projectName: "Accessibility Fixes",
     clientName: "US Bank",
-    isBillable: true,
+    isBillable: false,
     monday: _defaultHours,
     tuesday: _defaultHours,
     wednesday: _defaultHours,

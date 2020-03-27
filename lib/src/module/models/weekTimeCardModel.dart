@@ -1,30 +1,28 @@
 import 'projectTimeCardModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/constants.dart';
+import 'package:intl/intl.dart';
 
 class WeekTimeCardModel {
-
   DateTime weekDate;
   DateTime submissionDate;
   List<ProjectTimeCardModel> allTimeCards;
 
   WeekTimeCardModel(
-      {
-        DateTime weekDate,
-        DateTime submissionDate,
-        List<ProjectTimeCardModel> allTimeCards
-      }) : this.weekDate = weekDate ?? DateTime.now(),
+      {DateTime weekDate,
+      DateTime submissionDate,
+      List<ProjectTimeCardModel> allTimeCards})
+      : this.weekDate = weekDate ?? DateTime.now(),
         this.submissionDate = submissionDate ?? DateTime.now(),
-        this.allTimeCards = allTimeCards ?? List<ProjectTimeCardModel>();
+        this.allTimeCards = allTimeCards ?? [];
 
   WeekTimeCardModel.fromJson(Map<String, dynamic> json) {
-    Timestamp weekD = json[FireBaseKeys.weekDate];
-    weekDate = weekD.toDate();
 
-    Timestamp submD = json[FireBaseKeys.submissionDate];
-    submissionDate = submD.toDate();
+    weekDate = DateTime.parse(json[FireBaseKeys.weekDate].toString());
 
-    List<Map<String, dynamic>> allTime = json[FireBaseKeys.allTimeCards];
+    submissionDate = DateTime.parse(json[FireBaseKeys.submissionDate].toString());
+
+    final allTime = json[FireBaseKeys.allTimeCards];
     allTimeCards = List<ProjectTimeCardModel>();
     for (Map<String, dynamic> element in allTime) {
       allTimeCards.add(ProjectTimeCardModel.fromJson(element));
@@ -33,12 +31,12 @@ class WeekTimeCardModel {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> finalDict = {
-      FireBaseKeys.weekDate: weekDate.toIso8601String(),
+      FireBaseKeys.weekDate: DateFormat('yyyy-MM-dd').format(weekDate),
       FireBaseKeys.submissionDate: submissionDate.toIso8601String(),
       FireBaseKeys.owner: AppConstants.currentUserId,
     };
 
-    List<Map<String, dynamic>> temp =[];
+    List<Map<String, dynamic>> temp = [];
     for (ProjectTimeCardModel element in allTimeCards) {
       temp.add(element.toJson());
     }
@@ -47,10 +45,34 @@ class WeekTimeCardModel {
     return finalDict;
   }
 
+  String get weekDataStr {
+    return AppConstants.currentUserId + "_" + DateFormat('yyyy-MM-dd').format(weekDate);
+  }
+
   double get total {
     var value = 0.0;
     for (ProjectTimeCardModel element in allTimeCards) {
       value += element.total;
+    }
+    return value;
+  }
+
+  double get billableHours {
+    var value = 0.0;
+    for (ProjectTimeCardModel element in allTimeCards) {
+      if (element.isBillable) {
+        value += element.total;
+      }
+    }
+    return value;
+  }
+
+  double get nonBillableHours {
+    var value = 0.0;
+    for (ProjectTimeCardModel element in allTimeCards) {
+      if (!element.isBillable) {
+        value += element.total;
+      }
     }
     return value;
   }

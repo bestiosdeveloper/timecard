@@ -21,6 +21,10 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
   void initState() {
     super.initState();
 
+    _initSetupForViewModel();
+  }
+
+  _initSetupForViewModel() {
     viewModel.timeCardDetails.addNewBlankEntry();
     totalCardToShow = viewModel.timeCardDetails.allTimeCards.length;
   }
@@ -134,7 +138,13 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
                               style: TextStyle(
                                   fontSize: 17, color: AppColors.white)),
                           onPressed: () {
-                            viewModel.saveDataToServer();
+                            viewModel.saveDataToServer((isDone){
+                              viewModel.timeCardDetails = WeekTimeCardModel();
+                              _initSetupForViewModel();
+                              setState(() {
+                                shouldUpdate = true;
+                              });
+                            });
                           },
                         )
                       ]),
@@ -726,6 +736,7 @@ class CheckboxTile extends StatelessWidget {
         Expanded(
           flex: 8,
           child: Checkbox(
+            activeColor: AppColors.themeBlueColor[800],
             value: isSelected,
             onChanged: (bool value) {
               onChanged(value);

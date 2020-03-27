@@ -31,7 +31,6 @@ class UserModel {
   }
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    print("1");
     businessUnit = json[FireBaseKeys.businessUnit];
 
     Timestamp dtSt = json[FireBaseKeys.doj];
