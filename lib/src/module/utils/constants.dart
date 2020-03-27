@@ -5,7 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 //App used colors
 class AppColors {
 
-  static const List<Color> themeColors = [Colors.blue, Colors.red, Colors.green];
+  static const List<Color> themeColors = [
+    Colors.blue,
+    Colors.red,
+    Colors.green
+  ];
 
   static get themeBlueColor {
     if (AppConstants.currentUser == null) {
@@ -43,6 +47,8 @@ class AppConstants {
   static var lastSelectedSideMenu = 0;
   static const int minCredentialLength = 3;
   static const double homeMenuContainerHeight = 44.0;
+
+  static var currentUserId = "";
 }
 
 //App used strings
@@ -132,4 +138,26 @@ class FireBaseKeys {
   static const String profilePic = "profilePic";
   static const String profileTitle = "profileTitle";
   static const String themeColor = "themeColor";
+
+  //Project Time Card
+  static const String pid = "pid";
+  static const String type = "type";
+  static const String location = "location";
+  static const String projectName = "projectName";
+  static const String clientName = "clientName";
+  static const String isBillable = "isBillable";
+  static const String monday = "monday";
+  static const String tuesday = "tuesday";
+  static const String wednesday = "wednesday";
+  static const String thursday = "thursday";
+  static const String friday = "friday";
+  static const String saturday = "saturday";
+  static const String sunday = "sunday";
+  static const String comment = "comment";
+
+  //Week Time Card
+  static const String weekDate = "weekDate";
+  static const String submissionDate = "submissionDate";
+  static const String allTimeCards = "allTimeCards";
+  static const String owner = "owner";
 }

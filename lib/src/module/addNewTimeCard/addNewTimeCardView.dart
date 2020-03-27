@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sticky_headers/sticky_headers.dart';
 import 'addNewTimeCardViewModel.dart';
 import '../utils/constants.dart';
 import 'suggestedTimeCardView.dart';
+import '../models/weekTimeCardModel.dart';
+import '../models/projectTimeCardModel.dart';
 
 class AddNewTimeCardView extends StatefulWidget {
   @override
@@ -21,7 +22,7 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
     super.initState();
 
     viewModel.timeCardDetails.addNewBlankEntry();
-    totalCardToShow = viewModel.timeCardDetails.allEntry.length;
+    totalCardToShow = viewModel.timeCardDetails.allTimeCards.length;
   }
 
   @override
@@ -39,8 +40,8 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
           _getAddNewCardWidget(),
           SizedBox(height: 30.0),
           SuggestedTimeCardView(
-            onApply: (ProjectTimeCardItem cardDetails) {
-              viewModel.timeCardDetails.allEntry[currentSelectedCardIndex] =
+            onApply: (ProjectTimeCardModel cardDetails) {
+              viewModel.timeCardDetails.allTimeCards[currentSelectedCardIndex] =
                   cardDetails;
               setState(() {
                 shouldUpdate = true;
@@ -85,7 +86,7 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
         elevation: 3,
         child: ListView.builder(
             physics: NeverScrollableScrollPhysics(),
-            itemCount: viewModel.timeCardDetails.allEntry.length + 2,
+            itemCount: viewModel.timeCardDetails.allTimeCards.length + 2,
             itemBuilder: (context, index) {
               if (index < totalCardToShow) {
                 return _getCardDetailTile(index, (value) {
@@ -119,8 +120,21 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
                             viewModel.timeCardDetails.addNewBlankEntry();
                             setState(() {
                               totalCardToShow =
-                                  viewModel.timeCardDetails.allEntry.length;
+                                  viewModel.timeCardDetails.allTimeCards.length;
                             });
+                          },
+                        ),
+                        SizedBox(width: 20),
+                        RaisedButton(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          color: AppColors.themeBlueColor,
+                          child: Text("  Submit  ",
+                              style: TextStyle(
+                                  fontSize: 17, color: AppColors.white)),
+                          onPressed: () {
+                            viewModel.saveDataToServer();
                           },
                         )
                       ]),
@@ -147,7 +161,7 @@ class _AddNewTimeCardViewState extends State<AddNewTimeCardView> {
                 onSelect(index);
               },
               child: CardDetailTile(
-                viewModel.timeCardDetails.allEntry[index],
+                viewModel.timeCardDetails.allTimeCards[index],
                 isSelected: (index == currentSelectedCardIndex),
                 size: Size(screenWidth - 32, viewModel.defaultCardHeight),
                 onChanged: (bool value) {
@@ -190,7 +204,7 @@ class GrandTotalTile extends StatelessWidget {
           weekCardDetails != null,
         );
 
-  final WeekTimeCardItem weekCardDetails;
+  final WeekTimeCardModel weekCardDetails;
   final Size size;
 
   @override
@@ -214,7 +228,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: TitleValueVerticalTile(
-                      title: "Total",
+                      title: AppStrings.total,
                       value: weekCardDetails.total.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -228,7 +242,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: TitleValueVerticalTile(
-                      title: "Monday",
+                      title: AppStrings.monday,
                       value: weekCardDetails.monday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -242,7 +256,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: TitleValueVerticalTile(
-                      title: "Tuesday",
+                      title: AppStrings.tuesday,
                       value: weekCardDetails.tuesday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -256,7 +270,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: TitleValueVerticalTile(
-                      title: "Wednesday",
+                      title: AppStrings.wednesday,
                       value: weekCardDetails.wednesday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -277,7 +291,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: TitleValueVerticalTile(
-                      title: "Thursday",
+                      title: AppStrings.thursday,
                       value: weekCardDetails.thursday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -291,7 +305,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: TitleValueVerticalTile(
-                      title: "Friday",
+                      title: AppStrings.friday,
                       value: weekCardDetails.friday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -305,7 +319,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: TitleValueVerticalTile(
-                      title: "Saturday",
+                      title: AppStrings.saturday,
                       value: weekCardDetails.saturday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -319,7 +333,7 @@ class GrandTotalTile extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: TitleValueVerticalTile(
-                      title: "Sunday",
+                      title: AppStrings.sunday,
                       value: weekCardDetails.sunday.toString(),
                       titleStyle: TextStyle(
                         color: titleColor,
@@ -347,7 +361,7 @@ class CardDetailTile extends StatelessWidget {
           cardDetails != null,
         );
 
-  final ProjectTimeCardItem cardDetails;
+  final ProjectTimeCardModel cardDetails;
   final Size size;
   final ValueChanged<bool> onChanged;
   final bool isSelected;

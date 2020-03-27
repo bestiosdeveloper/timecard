@@ -29,6 +29,7 @@ class _ProfileDetailViewState extends State<ProfileDetailView> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.themeBlueColor,
         title: Text(
             AppConstants.currentUser.firstName + AppStrings.myProfileTitle),
       ),
@@ -219,3 +220,4 @@ class ProfileBackGroundClipper extends CustomClipper<Path> {
     return path;
   }
 }
+

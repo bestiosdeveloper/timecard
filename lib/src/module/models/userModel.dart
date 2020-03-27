@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:timecard/src/module/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserModel {
 
@@ -30,6 +31,7 @@ class UserModel {
   }
 
   UserModel.fromJson(Map<String, dynamic> json) {
+    print("1");
     businessUnit = json[FireBaseKeys.businessUnit];
 
     Timestamp dtSt = json[FireBaseKeys.doj];

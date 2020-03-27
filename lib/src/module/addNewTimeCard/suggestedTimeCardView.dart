@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import '../utils/constants.dart';
-import 'addNewTimeCardViewModel.dart';
 import 'addNewTimeCardView.dart';
+import '../models/projectTimeCardModel.dart';
 
 class SuggestedTimeCardView extends StatelessWidget {
 
   static double _defaultHours = 8.0;
 
-  ProjectTimeCardItem _cardDetails = ProjectTimeCardItem(
+  ProjectTimeCardModel _cardDetails = ProjectTimeCardModel(
     pid: "1234",
     type: "Project work",
     location: "Noida",
@@ -24,7 +24,7 @@ class SuggestedTimeCardView extends StatelessWidget {
     comment: "default comment"
   );
 
-  final ValueChanged<ProjectTimeCardItem> onApply;
+  final ValueChanged<ProjectTimeCardModel> onApply;
 
   SuggestedTimeCardView({this.onApply});
 
@@ -66,7 +66,7 @@ class SuggestedCardDetailTile extends StatelessWidget {
   cardDetails != null,
   );
 
-  final ProjectTimeCardItem cardDetails;
+  final ProjectTimeCardModel cardDetails;
   final Size size;
   final ValueChanged<bool> onApply;
 

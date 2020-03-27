@@ -6,6 +6,7 @@ import '../loginPage/loginView.dart';
 import '../utils/constants.dart';
 import 'package:timecard/src/module/models/userModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -20,11 +21,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     getUserDetails();
+
+    FirebaseAuth.instance.signInAnonymously();
   }
 
   @override
   Widget build(BuildContext context) {
-
+    
     return Scaffold(
       key: _scaffoldKey,
       body: Stack(
@@ -98,9 +101,10 @@ class _SplashScreenState extends State<SplashScreen> {
     }
   }
 
-  _fetchUserDetails(String usedId) {
+  _fetchUserDetails(String userId) {
 
-    Firestore.instance.collection(FireBaseKeys.userData).document(usedId).get().then((result) {
+    AppConstants.currentUserId = userId;
+    Firestore.instance.collection(FireBaseKeys.userData).document(userId).get().then((result) {
       _saveCurrentUserData(result.data);
       _startTimer();
     });
